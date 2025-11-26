@@ -14,19 +14,25 @@ export default async function handler(req, res) {
       secure: false,
       auth: {
         user: "victor@quorania.com",
-        pass: process.env.OUTLOOK_PASSWORD
-      }
+        pass: process.env.OUTLOOK_PASSWORD,
+      },
+      tls: {
+        ciphers: "SSLv3",
+        rejectUnauthorized: false,
+      },
     });
 
     await transporter.sendMail({
       from: "victor@quorania.com",
       to: "victor@quorania.com",
       subject: "Nueva incidencia postventa",
-      text: `Nombre: ${nombre}\nCorreo: ${correo}\nMensaje: ${mensaje}`
+      text: `Nombre: ${nombre}\nCorreo: ${correo}\nMensaje: ${mensaje}`,
     });
 
     return res.status(200).json({ success: true });
+
   } catch (e) {
-    return res.status(500).json({ error: "Error enviando correo." });
+    console.error("EMAIL ERROR:", e);  // 👈 IMPRIME EL ERROR REAL
+    return res.status(500).json({ error: e.message });  // 👈 DEVUELVE EL ERROR REAL
   }
 }
